@@ -1,0 +1,1063 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Door Rate Calculator | Aequus Claims</title>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;500;600;700&family=Barlow:wght@300;400;500;600&family=Barlow+Condensed:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:#1e3050;--navy-dark:#0f1923;--navy-mid:#243a5e;
+  --gold:#c9a84c;--gold-light:#e8c96a;--gold-dim:#8a6e2f;
+  --steel:#4a6fa5;--steel-light:#6b8fc4;
+  --bg:#131e2e;--surface:rgba(255,255,255,0.03);
+  --text:#e2e8f0;--muted:#9db0be;--dim:#445566;
+  --green:#4caf7d;--red:#e05c5c;--white:#ffffff;
+  --border:rgba(201,168,76,0.15);
+}
+html{scroll-behavior:smooth}
+body{background:#131e2e;color:var(--text);font-family:'Barlow',sans-serif;overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:1000;background:rgba(8,12,20,0.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0 40px;height:70px;display:flex;align-items:center;justify-content:space-between}
+.nav-logo img{height:44px;width:auto}
+.nav-links{display:flex;gap:32px;align-items:center}
+.nav-links a{font-family:'Oswald',sans-serif;font-size:12px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);transition:color 0.2s}
+.nav-links a:hover,.nav-links a.active{color:var(--gold)}
+.nav-cta{background:linear-gradient(135deg,var(--gold),var(--gold-dim));color:#000;font-family:'Oswald',sans-serif;font-size:11px;letter-spacing:2px;text-transform:uppercase;padding:9px 20px;border-radius:2px;font-weight:600;transition:opacity 0.2s}
+.nav-cta:hover{opacity:0.85;color:#000}
+.nav-hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:4px}
+.nav-hamburger span{width:24px;height:2px;background:var(--gold);display:block;transition:0.3s}
+
+/* MOBILE NAV */
+@media(max-width:768px){
+  nav{padding:0 20px}
+  .nav-links{display:none;position:fixed;top:70px;left:0;right:0;background:rgba(8,12,20,0.98);flex-direction:column;gap:0;padding:20px 0;border-bottom:1px solid var(--border)}
+  .nav-links.open{display:flex}
+  .nav-links a{padding:14px 30px;width:100%;border-bottom:1px solid rgba(255,255,255,0.04)}
+  .nav-cta{margin:14px 30px;display:block;text-align:center}
+  .nav-hamburger{display:flex}
+}
+
+/* BUTTONS */
+.btn-primary{display:inline-block;background:linear-gradient(135deg,var(--gold),var(--gold-dim));color:#000;font-family:'Oswald',sans-serif;font-size:12px;letter-spacing:2.5px;text-transform:uppercase;padding:14px 32px;border-radius:2px;font-weight:700;transition:opacity 0.2s;border:none;cursor:pointer}
+.btn-primary:hover{opacity:0.85}
+.btn-outline{display:inline-block;background:transparent;color:var(--gold);font-family:'Oswald',sans-serif;font-size:12px;letter-spacing:2.5px;text-transform:uppercase;padding:13px 32px;border-radius:2px;font-weight:600;border:1px solid var(--gold);transition:all 0.2s;cursor:pointer}
+.btn-outline:hover{background:rgba(201,168,76,0.1)}
+
+/* SECTION */
+.section{padding:100px 40px}
+.section-inner{max-width:1100px;margin:0 auto}
+.eyebrow{font-family:'Barlow Condensed',sans-serif;font-size:11px;letter-spacing:4px;text-transform:uppercase;color:var(--gold);margin-bottom:12px}
+.section-title{font-family:'Oswald',sans-serif;font-size:clamp(32px,4vw,52px);font-weight:700;color:var(--white);line-height:1.1;margin-bottom:20px}
+.section-body{font-size:16px;color:var(--muted);line-height:1.9;max-width:680px}
+.divider{width:60px;height:3px;background:linear-gradient(90deg,var(--gold),transparent);margin:20px 0 32px}
+
+/* FOOTER */
+footer{background:var(--navy-dark);border-top:1px solid var(--border);padding:60px 40px 40px}
+.footer-inner{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr 1fr;gap:48px}
+.footer-logo img{height:50px;margin-bottom:16px}
+.footer-tagline{font-size:13px;color:var(--muted);line-height:1.7}
+.footer-col-title{font-family:'Oswald',sans-serif;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:16px}
+.footer-links{display:flex;flex-direction:column;gap:10px}
+.footer-links a{font-size:13px;color:var(--muted);transition:color 0.2s}
+.footer-links a:hover{color:var(--gold)}
+.footer-contact-item{font-size:13px;color:var(--muted);margin-bottom:8px;line-height:1.5}
+.footer-bottom{max-width:1100px;margin:40px auto 0;padding-top:24px;border-top:1px solid rgba(255,255,255,0.05);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
+.footer-copy{font-size:12px;color:var(--dim)}
+.footer-credentials{display:flex;gap:20px}
+.footer-cred{font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--dim);background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);padding:4px 10px;border-radius:1px}
+
+/* CARDS */
+.card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:24px}
+.card{background:rgba(255,255,255,0.02);border:1px solid var(--border);border-radius:2px;padding:32px;transition:border-color 0.2s}
+.card:hover{border-color:rgba(201,168,76,0.4)}
+.card-icon{font-size:28px;margin-bottom:16px}
+.card-title{font-family:'Oswald',sans-serif;font-size:16px;letter-spacing:1px;text-transform:uppercase;color:var(--gold);margin-bottom:10px}
+.card-text{font-size:14px;color:var(--muted);line-height:1.8}
+
+/* STAT BLOCKS */
+.stat-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:1px;background:var(--border);border:1px solid var(--border);border-radius:2px;overflow:hidden;margin:40px 0}
+.stat-item{background:#131e2e;padding:28px 24px;text-align:center}
+.stat-value{font-family:'Oswald',sans-serif;font-size:36px;font-weight:700;color:var(--gold);line-height:1;margin-bottom:6px}
+.stat-label{font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted)}
+
+/* FORM */
+.form-field{margin-bottom:16px}
+.form-field label{display:block;font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.form-field input,.form-field select,.form-field textarea{width:100%;background:rgba(0,0,0,0.4);border:1px solid rgba(201,168,76,0.2);color:var(--white);padding:12px 16px;font-size:14px;font-family:'Barlow',sans-serif;outline:none;border-radius:2px;transition:border-color 0.2s}
+.form-field input:focus,.form-field select:focus,.form-field textarea:focus{border-color:var(--gold)}
+.form-field select option{background:#1a1a2e}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+
+/* PAGE HERO */
+.page-hero{padding:160px 40px 80px;background:linear-gradient(135deg,var(--navy-dark) 0%,#131e2e 60%);border-bottom:1px solid var(--border);position:relative;overflow:hidden}
+.page-hero::before{content:'';position:absolute;top:0;left:0;right:0;bottom:0;background:radial-gradient(ellipse at 30% 50%,rgba(201,168,76,0.06) 0%,transparent 60%)}
+.page-hero-inner{max-width:1100px;margin:0 auto;position:relative;z-index:1}
+
+@media(max-width:768px){
+  .section{padding:70px 20px}
+  .page-hero{padding:120px 20px 60px}
+  .footer-inner{grid-template-columns:1fr}
+  .form-grid{grid-template-columns:1fr}
+  footer{padding:40px 20px 30px}
+  .footer-bottom{flex-direction:column;align-items:flex-start}
+}
+</style>
+<style>
+/* ── CALCULATOR SPECIFIC STYLES ── */
+:root{
+  --gold:#f5c842; --gold-dim:#a08820; --gold-bg:rgba(255,200,50,0.07);
+  --gold-border:rgba(255,200,50,0.18); --bg:#131e2e;
+  --surface:rgba(255,255,255,0.03); --muted-calc:#888; --dim-calc:#555;
+  --green:#4caf7d; --red:#e05c5c; --blue:#5c9ee0;
+}
+.calc-wrap{ background:#131e2e; padding:40px 20px 80px; }
+.calc-container{ max-width:980px; margin:0 auto; }
+.calc-grid{ display:grid; grid-template-columns:1fr 1fr; gap:32px; align-items:start; }
+.c-card{ background:rgba(255,255,255,0.03); border:1px solid rgba(255,200,50,0.18); border-radius:2px; margin-bottom:28px; overflow:hidden; }
+.c-card-hdr{ background:rgba(255,200,50,0.07); border-bottom:1px solid rgba(255,200,50,0.18); padding:12px 20px; display:flex; align-items:center; gap:10px; }
+.c-card-title{ font-family:'Oswald',sans-serif; font-size:13px; letter-spacing:2px; text-transform:uppercase; color:#f5c842; }
+.c-card-body{ padding:20px; }
+.c-field{ margin-bottom:16px; }
+.c-label{ display:block; font-family:'Oswald',sans-serif; font-size:11px; letter-spacing:1.5px; text-transform:uppercase; color:#aaa; margin-bottom:4px; }
+.c-sublabel{ font-size:11px; color:#666; margin-bottom:6px; }
+.c-input-wrap{ display:flex; align-items:stretch; }
+.c-addon{ background:rgba(255,200,50,0.1); border:1px solid rgba(255,200,50,0.2); padding:8px 10px; font-size:13px; color:#f5c842; font-family:'Oswald',sans-serif; white-space:nowrap; display:flex; align-items:center; }
+.c-addon-l{ border-right:none; }
+.c-addon-r{ border-left:none; }
+.c-input{ flex:1; background:rgba(0,0,0,0.4); border:1px solid rgba(255,200,50,0.2); color:#fff; padding:8px 12px; font-size:14px; font-family:'Barlow',sans-serif; outline:none; width:100%; -moz-appearance:textfield; }
+.c-input::-webkit-inner-spin-button,.c-input::-webkit-outer-spin-button{ -webkit-appearance:none; }
+.c-input:focus{ border-color:rgba(255,200,50,0.5); }
+select.c-input{ cursor:pointer; } select.c-input option{ background:#1a1a1a; }
+.c-subtotal{ border-top:1px solid rgba(255,200,50,0.1); padding-top:12px; margin-top:4px; display:flex; justify-content:space-between; font-family:'Oswald',sans-serif; font-size:13px; color:#f5c842; }
+.c-grid2{ display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+.c-infobox{ background:rgba(255,200,50,0.05); border:1px solid rgba(255,200,50,0.15); border-radius:2px; padding:10px 14px; font-size:13px; color:#aaa; margin-top:8px; }
+.c-callout{ border-left:3px solid #f5c842; padding:12px 14px; margin-bottom:14px; background:rgba(255,200,50,0.03); border-radius:0 2px 2px 0; font-size:12px; color:#999; line-height:1.7; }
+.c-note-green{ background:rgba(76,175,125,0.05); border:1px solid rgba(76,175,125,0.15); border-left:3px solid #4caf7d; border-radius:2px; padding:12px 14px; font-size:12px; color:#999; line-height:1.7; margin-top:10px; }
+
+/* RESULTS */
+.c-results{ border:1px solid rgba(255,200,50,0.3); border-top:3px solid #f5c842; background:rgba(255,200,50,0.03); border-radius:2px; padding:28px 32px; margin-top:8px; display:none; }
+.c-results.visible{ display:block; }
+.c-results-title{ font-family:'Oswald',sans-serif; font-size:12px; letter-spacing:3px; color:#f5c842; text-transform:uppercase; margin-bottom:24px; }
+.c-results-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:24px; margin-bottom:28px; }
+.c-ri-label{ font-family:'Oswald',sans-serif; font-size:10px; letter-spacing:1.5px; text-transform:uppercase; color:#666; margin-bottom:4px; }
+.c-ri-val{ font-family:'Oswald',sans-serif; font-size:16px; font-weight:600; color:#ccc; }
+.c-ri-val.hl{ font-size:20px; color:#fff; }
+.c-ri-val.profit{ font-size:18px; color:#4caf7d; }
+.c-results-footer{ border-top:1px solid rgba(255,200,50,0.15); padding-top:20px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; }
+.c-rate-lbl{ font-family:'Oswald',sans-serif; font-size:11px; letter-spacing:2px; color:#888; text-transform:uppercase; text-align:right; }
+.c-rate-val{ font-family:'Oswald',sans-serif; font-size:48px; font-weight:700; color:#f5c842; line-height:1; }
+
+/* GAP PANEL */
+.c-gap{ border:1px solid rgba(224,92,92,0.3); border-top:3px solid #e05c5c; background:rgba(224,92,92,0.03); border-radius:2px; padding:28px 32px; margin-top:24px; display:none; }
+.c-gap.visible{ display:block; }
+.c-gap-title{ font-family:'Oswald',sans-serif; font-size:13px; letter-spacing:3px; color:#e05c5c; text-transform:uppercase; margin-bottom:6px; }
+.c-gap-sub{ font-size:13px; color:#666; margin-bottom:20px; }
+.c-gap-inputs{ display:flex; align-items:center; gap:16px; flex-wrap:wrap; margin-bottom:20px; padding:16px; background:rgba(0,0,0,0.3); border:1px solid rgba(255,200,50,0.1); border-radius:2px; }
+.c-gap-inputs label{ font-family:'Oswald',sans-serif; font-size:11px; letter-spacing:1.5px; text-transform:uppercase; color:#aaa; white-space:nowrap; }
+.c-gap-inputs .c-input-wrap{ flex:1; min-width:140px; max-width:220px; }
+.c-gap-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:16px; margin-bottom:20px; }
+.c-gap-item{ padding:16px; border:1px solid rgba(224,92,92,0.15); border-radius:2px; background:rgba(224,92,92,0.04); }
+.c-gap-item.pos{ border-color:rgba(76,175,125,0.2); background:rgba(76,175,125,0.04); }
+.c-gap-lbl{ font-family:'Oswald',sans-serif; font-size:10px; letter-spacing:1.5px; text-transform:uppercase; color:#666; margin-bottom:6px; }
+.c-gap-val{ font-family:'Oswald',sans-serif; font-size:22px; font-weight:700; color:#e05c5c; }
+.c-gap-val.pos{ color:#4caf7d; }
+.c-gap-s{ font-size:11px; color:#555; margin-top:4px; }
+.c-bar-track{ background:rgba(255,255,255,0.04); border-radius:2px; height:36px; position:relative; overflow:hidden; border:1px solid rgba(255,255,255,0.06); }
+.c-bar-door{ position:absolute; top:0; height:100%; background:rgba(245,200,66,0.12); border-right:2px solid #f5c842; display:flex; align-items:center; justify-content:flex-end; padding-right:8px; transition:width 0.5s ease; }
+.c-bar-cur{ position:absolute; top:0; height:100%; background:rgba(92,158,224,0.15); border-right:2px solid #5c9ee0; display:flex; align-items:center; justify-content:flex-end; padding-right:8px; transition:width 0.5s ease; }
+.c-bar-ins{ height:100%; background:linear-gradient(90deg,rgba(224,92,92,0.6),rgba(180,50,50,0.7)); display:flex; align-items:center; padding-left:10px; transition:width 0.5s ease; }
+
+/* LOSS PER JOB */
+.c-lpj{ background:rgba(0,0,0,0.3); border:1px solid rgba(224,92,92,0.15); border-radius:2px; padding:20px; margin-top:20px; }
+
+/* NATIONAL */
+.c-nat{ border:1px solid rgba(92,158,224,0.3); border-top:3px solid #5c9ee0; background:rgba(92,158,224,0.03); border-radius:2px; padding:28px 32px; margin-top:24px; }
+.c-nat-title{ font-family:'Oswald',sans-serif; font-size:13px; letter-spacing:3px; color:#5c9ee0; text-transform:uppercase; margin-bottom:6px; }
+.c-nat-sub{ font-size:13px; color:#666; margin-bottom:20px; line-height:1.6; }
+.c-nat-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:16px; margin-bottom:20px; }
+.c-nat-item{ padding:16px; border:1px solid rgba(92,158,224,0.15); border-radius:2px; background:rgba(92,158,224,0.04); text-align:center; }
+.c-nat-lbl{ font-family:'Oswald',sans-serif; font-size:10px; letter-spacing:1.5px; text-transform:uppercase; color:#666; margin-bottom:6px; }
+.c-nat-val{ font-family:'Oswald',sans-serif; font-size:26px; font-weight:700; color:#5c9ee0; }
+.c-nat-s{ font-size:11px; color:#555; margin-top:4px; }
+.c-reg-table{ width:100%; border-collapse:collapse; font-size:13px; margin-top:10px; }
+.c-reg-table th{ font-family:'Oswald',sans-serif; font-size:10px; letter-spacing:1.5px; text-transform:uppercase; color:#555; text-align:left; padding:8px 12px; border-bottom:1px solid rgba(92,158,224,0.12); }
+.c-reg-table td{ padding:10px 12px; border-bottom:1px solid rgba(255,255,255,0.04); color:#ccc; }
+.c-reg-table .rc{ font-family:'Oswald',sans-serif; font-size:15px; color:#5c9ee0; }
+.c-reg-table .sc{ color:#555; font-size:12px; }
+.c-submit-form{ background:rgba(0,0,0,0.3); border:1px solid rgba(92,158,224,0.15); border-radius:2px; padding:20px; margin-bottom:16px; }
+.c-submit-title{ font-family:'Oswald',sans-serif; font-size:12px; letter-spacing:2px; text-transform:uppercase; color:#aaa; margin-bottom:14px; }
+.c-submit-row{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; margin-bottom:12px; }
+.c-sf label{ display:block; font-family:'Oswald',sans-serif; font-size:10px; letter-spacing:1.5px; text-transform:uppercase; color:#666; margin-bottom:4px; }
+.c-sf input,.c-sf select{ width:100%; background:rgba(0,0,0,0.4); border:1px solid rgba(255,200,50,0.2); color:#fff; padding:8px 12px; font-size:14px; font-family:'Barlow',sans-serif; outline:none; }
+.c-opt-row{ display:flex; align-items:flex-start; gap:10px; margin-bottom:14px; }
+.c-opt-row input[type=checkbox]{ width:16px; height:16px; margin-top:3px; flex-shrink:0; accent-color:#5c9ee0; }
+.c-opt-row label{ font-size:12px; color:#777; line-height:1.5; cursor:pointer; }
+.c-btn-submit{ background:linear-gradient(135deg,#5c9ee0,#3a7abf); border:none; color:#fff; font-family:'Oswald',sans-serif; font-size:13px; letter-spacing:2px; text-transform:uppercase; padding:12px 28px; cursor:pointer; border-radius:2px; transition:opacity 0.2s; }
+.c-btn-submit:hover{ opacity:0.85; } .c-btn-submit:disabled{ opacity:0.4; cursor:not-allowed; }
+.c-submit-success{ display:none; background:rgba(76,175,125,0.1); border:1px solid rgba(76,175,125,0.3); border-radius:2px; padding:14px 18px; font-size:13px; color:#4caf7d; margin-top:12px; }
+.c-submit-success.visible{ display:block; }
+.c-nat-disc{ font-size:11px; color:#444; line-height:1.6; border-top:1px solid rgba(255,255,255,0.05); padding-top:14px; margin-top:8px; }
+
+/* CTA */
+.c-cta{ border:1px solid rgba(245,200,66,0.3); border-top:4px solid #f5c842; background:rgba(245,200,66,0.02); border-radius:2px; padding:36px 32px; margin-top:24px; }
+.c-cta-ey{ font-family:'Barlow Condensed',sans-serif; font-size:11px; letter-spacing:4px; color:#f5c842; text-transform:uppercase; margin-bottom:8px; }
+.c-cta-h{ font-family:'Oswald',sans-serif; font-size:clamp(22px,3vw,34px); font-weight:700; color:#fff; line-height:1.1; margin-bottom:12px; }
+.c-cta-bridge{ border-left:3px solid #f5c842; padding:16px 20px; margin-bottom:20px; background:rgba(255,200,50,0.03); font-size:13px; color:#999; line-height:1.9; }
+.c-cta-body{ font-size:14px; color:#888; line-height:1.8; margin-bottom:24px; }
+.c-stat-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:14px; margin-bottom:28px; }
+.c-stat-card{ padding:18px; border-radius:2px; }
+.c-stat-lbl{ font-family:'Oswald',sans-serif; font-size:10px; letter-spacing:2px; text-transform:uppercase; color:#666; margin-bottom:8px; }
+.c-stat-num{ font-family:'Oswald',sans-serif; font-size:36px; font-weight:700; line-height:1; }
+.c-stat-s{ font-size:12px; color:#666; margin-top:6px; line-height:1.5; }
+.c-what{ background:rgba(0,0,0,0.3); border:1px solid rgba(255,200,50,0.1); border-left:3px solid #f5c842; border-radius:2px; padding:16px 20px; margin-bottom:28px; font-size:13px; color:#777; line-height:1.8; }
+.c-cta-form-grid{ display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:16px; }
+.c-cta-field label{ display:block; font-family:'Oswald',sans-serif; font-size:10px; letter-spacing:1.5px; text-transform:uppercase; color:#666; margin-bottom:4px; }
+.c-cta-field input,.c-cta-field select{ width:100%; background:rgba(0,0,0,0.4); border:1px solid rgba(255,200,50,0.2); color:#fff; padding:10px 14px; font-size:14px; font-family:'Barlow',sans-serif; outline:none; border-radius:2px; }
+.c-btn-cta{ background:linear-gradient(135deg,#f5c842,#e8a020); border:none; color:#000; font-family:'Oswald',sans-serif; font-size:14px; letter-spacing:2px; text-transform:uppercase; padding:16px 36px; cursor:pointer; border-radius:2px; font-weight:600; transition:opacity 0.2s; width:100%; margin-top:6px; }
+.c-btn-cta:hover{ opacity:0.88; } .c-btn-cta:disabled{ opacity:0.4; cursor:not-allowed; }
+.c-cta-success{ display:none; background:rgba(76,175,125,0.1); border:1px solid rgba(76,175,125,0.3); border-radius:2px; padding:20px; font-size:14px; color:#4caf7d; line-height:1.7; margin-top:14px; }
+.c-cta-success.visible{ display:block; }
+.c-disc{ font-size:11px; color:#444; margin-top:14px; line-height:1.6; }
+.c-placeholder{ border:1px dashed rgba(255,200,50,0.15); border-radius:2px; padding:40px; text-align:center; color:#555; font-size:14px; margin-top:8px; }
+@media(max-width:680px){
+  .calc-grid{ grid-template-columns:1fr; gap:0; }
+  .c-grid2{ grid-template-columns:1fr; }
+  .c-results,.c-gap,.c-nat,.c-cta{ padding:20px; }
+  .c-results-footer{ flex-direction:column; align-items:flex-start; }
+  .c-rate-lbl,.c-rate-val{ text-align:left; }
+  .c-submit-row{ grid-template-columns:1fr; }
+  .c-gap-inputs{ flex-direction:column; align-items:stretch; }
+  .c-cta-form-grid{ grid-template-columns:1fr; }
+}
+</style>
+</head>
+<body>
+<nav id="mainNav">
+  <a href="index.html" class="nav-logo"><img src="data:image/png;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/2wBDAQUFBQcGBw4ICA4eFBEUHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCANABcADASIAAhEBAxEB/8QAHAABAAMBAQEBAQAAAAAAAAAAAAQFBgMCAQcI/8QAUBABAAIBAgIECQULCAoDAAMAAAECAwQRBSESMUFRBhMiYXGBkbHRFBWSk6EyQlJUYnJzssHS4iM0NVOCosLwBxYkJTNDRGODs2R04UWEo//EABkBAQADAQEAAAAAAAAAAAAAAAABAgMEBf/EACgRAQACAgEDBQACAwEBAAAAAAABAgMREhMhMQQiMkFRM2EUI0JScf/aAAwDAQACEQMRAD8A/jIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA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AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAf/Z" alt="Aequus Claims" /></a>
+  <div class="nav-links" id="navLinks">
+    <a href="index.html">Home</a>
+    <a href="about.html">About</a>
+    <a href="services.html">Services</a>
+    <a href="why.html">Why Aequus</a>
+    <a href="calculator.html">Door Rate Calculator</a>
+    <a href="contact.html" class="nav-cta">Get a Consultation</a>
+  </div>
+  <div class="nav-hamburger" onclick="document.getElementById('navLinks').classList.toggle('open')">
+    <span></span><span></span><span></span>
+  </div>
+</nav>
+
+<div class="page-hero">
+  <div class="page-hero-inner">
+    <div class="eyebrow">Door Rate Calculator</div>
+    <h1 class="section-title">Know Your True<br><span style="color:var(--gold,#c9a84c)">Cost of Doing Business.</span></h1>
+    <p style="font-size:17px;color:var(--muted,#9db0be);max-width:600px;line-height:1.9;margin-top:16px">Enter your real costs and see exactly what you should be charging per billable hour — then see what it is costing you not to. Submit your rate to the national database and help build the industry's most transparent labor rate benchmark.</p>
+  </div>
+</div>
+
+<!-- NETLIFY FORM -->
+<form name="consultation" netlify netlify-honeypot="bot-field" hidden>
+  <input type="text" name="name"/><input type="text" name="shop"/><input type="email" name="email"/>
+  <input type="tel" name="phone"/><input type="text" name="state"/><input type="number" name="ros"/>
+  <input type="text" name="tier"/><input type="text" name="door-rate"/><input type="text" name="ins-rate"/><input type="text" name="cur-rate"/>
+</form>
+
+<div class="calc-wrap">
+
+<!-- HEADER RATE BADGE -->
+<div style="max-width:980px;margin:0 auto 24px;padding:0 20px">
+  <div id="headerBadge" style="display:none;background:linear-gradient(135deg,#f5c842,#e8a020);border-radius:2px;padding:14px 24px;text-align:center;float:right">
+    <div style="font-family:'Oswald',sans-serif;font-size:11px;letter-spacing:2px;color:rgba(0,0,0,0.6);text-transform:uppercase">Your Door Rate</div>
+    <div style="font-family:'Oswald',sans-serif;font-size:38px;font-weight:700;color:#000;line-height:1.1" id="badgeRate">$0.00</div>
+    <div style="font-size:11px;color:rgba(0,0,0,0.5)">per billable hour</div>
+  </div>
+  <div style="clear:both"></div>
+</div>
+
+<div class="calc-container">
+
+<div class="calc-grid">
+
+<!-- LEFT COLUMN -->
+<div style="display:flex;flex-direction:column;gap:0">
+  <div class="c-card">
+    <div class="c-card-hdr"><span style="font-size:18px">&#127970;</span><span class="c-card-title">Facility Costs</span></div>
+    <div class="c-card-body">
+      <div class="c-field"><label class="c-label">Monthly Rent / Mortgage</label><div class="c-input-wrap"><span class="c-addon c-addon-l">$</span><input type="number" class="c-input" id="rent" min="0" placeholder="0" oninput="calc()"/></div></div>
+      <div class="c-field"><label class="c-label">Utilities</label><div class="c-sublabel">Electric, gas, water</div><div class="c-input-wrap"><span class="c-addon c-addon-l">$</span><input type="number" class="c-input" id="utilities" min="0" placeholder="0" oninput="calc()"/></div></div>
+      <div class="c-field"><label class="c-label">Phone &amp; Internet</label><div class="c-input-wrap"><span class="c-addon c-addon-l">$</span><input type="number" class="c-input" id="phone" min="0" placeholder="0" oninput="calc()"/></div></div>
+      <div class="c-field"><label class="c-label">Property &amp; Liability Insurance</label><div class="c-input-wrap"><span class="c-addon c-addon-l">$</span><input type="number" class="c-input" id="propIns" min="0" placeholder="0" oninput="calc()"/></div></div>
+      <div class="c-field"><label class="c-label">Equipment Leases</label><div class="c-sublabel">Frame machines, lifts, paint booth</div><div class="c-input-wrap"><span class="c-addon c-addon-l">$</span><input type="number" class="c-input" id="equipLease" min="0" placeholder="0" oninput="calc()"/></div></div>
+      <div class="c-field"><label class="c-label">Equipment Maintenance &amp; Calibration</label><div class="c-input-wrap"><span class="c-addon c-addon-l">$</span><input type="number" class="c-input" id="equipMaint" min="0" placeholder="0" oninput="calc()"/></div></div>
+      <div class="c-subtotal"><span>FACILITY SUBTOTAL</span><span id="facilityTotal">$0.00/mo</span></div>
+    </div>
+  </div>
+
+  <div class="c-card">
+    <div class="c-card-hdr"><span style="font-size:18px">&#128203;</span><span class="c-card-title">Other Overhead</span></div>
+    <div class="c-card-body">
+      <div class="c-field"><label class="c-label">Software Subscriptions</label><div class="c-sublabel">Estimating, management systems</div><div class="c-input-wrap"><span class="c-addon c-addon-l">$</span><input type="number" class="c-input" id="software" min="0" placeholder="0" oninput="calc()"/></div></div>
+      <div class="c-field"><label class="c-label">Advertising &amp; Marketing</label><div class="c-input-wrap"><span class="c-addon c-addon-l">$</span><input type="number" class="c-input" id="marketing" min="0" placeholder="0" oninput="calc()"/></div></div>
+      <div class="c-field"><label class="c-label">Accounting / Legal / Banking</label><div class="c-input-wrap"><span class="c-addon c-addon-l">$</span><input type="number" class="c-input" id="accounting" min="0" placeholder="0" oninput="calc()"/></div></div>
+      <div class="c-field"><label class="c-label">Miscellaneous</label><div class="c-sublabel">Uniforms, laundry service, other</div><div class="c-input-wrap"><span class="c-addon c-addon-l">$</span><input type="number" class="c-input" id="misc" min="0" placeholder="0" oninput="calc()"/></div></div>
+      <div class="c-subtotal"><span>OVERHEAD SUBTOTAL</span><span id="overheadTotal">$0.00/mo</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- RIGHT COLUMN -->
+<div>
+  <div class="c-card">
+    <div class="c-card-hdr"><span style="font-size:18px">&#128119;</span><span class="c-card-title">Labor Costs</span></div>
+    <div class="c-card-body">
+      <div class="c-grid2">
+        <div class="c-field"><label class="c-label"># of Technicians</label><div class="c-input-wrap"><input type="number" class="c-input" id="numTechs" min="0" placeholder="0" oninput="calc()"/></div></div>
+        <div class="c-field"><label class="c-label">Avg Hourly Wage</label><div class="c-input-wrap"><span class="c-addon c-addon-l">$</span><input type="number" class="c-input" id="techWage" min="0" placeholder="0" oninput="calc()"/></div></div>
+      </div>
+      <div class="c-grid2">
+        <div class="c-field"><label class="c-label"># of Painters</label><div class="c-input-wrap"><input type="number" class="c-input" id="numPainters" min="0" placeholder="0" oninput="calc()"/></div></div>
+        <div class="c-field"><label class="c-label">Painter Hourly Wage</label><div class="c-input-wrap"><span class="c-addon c-addon-l">$</span><input type="number" class="c-input" id="painterWage" min="0" placeholder="0" oninput="calc()"/></div></div>
+      </div>
+      <div class="c-grid2">
+        <div class="c-field"><label class="c-label"># of Estimators</label><div class="c-input-wrap"><input type="number" class="c-input" id="numEstimators" min="0" placeholder="0" oninput="calc()"/></div></div>
+        <div class="c-field"><label class="c-label">Estimator Monthly Salary</label><div class="c-input-wrap"><span class="c-addon c-addon-l">$</span><input type="number" class="c-input" id="estimatorSalary" min="0" placeholder="0" oninput="calc()"/></div></div>
+      </div>
+      <div class="c-field"><label class="c-label">Admin / Office Staff (total monthly)</label><div class="c-input-wrap"><span class="c-addon c-addon-l">$</span><input type="number" class="c-input" id="adminSalary" min="0" placeholder="0" oninput="calc()"/></div></div>
+      <div class="c-field"><label class="c-label">Owner Salary (if working in shop)</label><div class="c-input-wrap"><span class="c-addon c-addon-l">$</span><input type="number" class="c-input" id="ownerSalary" min="0" placeholder="0" oninput="calc()"/></div></div>
+      <div class="c-field"><label class="c-label">Support Staff (monthly total)</label><div class="c-sublabel">Apprentices, porters, detailers, buffers &amp; other non-billable employees</div><div class="c-input-wrap"><span class="c-addon c-addon-l">$</span><input type="number" class="c-input" id="supportStaff" min="0" placeholder="0" oninput="calc()"/></div></div>
+      <div class="c-grid2">
+        <div class="c-field"><label class="c-label">Payroll Tax Rate</label><div class="c-input-wrap"><input type="number" class="c-input" id="payrollTax" min="0" max="100" value="7.65" oninput="calc()"/><span class="c-addon c-addon-r">%</span></div></div>
+        <div class="c-field"><label class="c-label">Health Benefits (monthly)</label><div class="c-input-wrap"><span class="c-addon c-addon-l">$</span><input type="number" class="c-input" id="benefits" min="0" placeholder="0" oninput="calc()"/></div></div>
+      </div>
+      <div class="c-field"><label class="c-label">Workers' Comp Insurance (monthly)</label><div class="c-input-wrap"><span class="c-addon c-addon-l">$</span><input type="number" class="c-input" id="workersComp" min="0" placeholder="0" oninput="calc()"/></div></div>
+      <div class="c-subtotal"><span>LABOR SUBTOTAL</span><span id="laborTotal">$0.00/mo</span></div>
+    </div>
+  </div>
+
+  <div class="c-card">
+    <div class="c-card-hdr"><span style="font-size:18px">&#9200;</span><span class="c-card-title">Billable Hours &amp; Utilization</span></div>
+    <div class="c-card-body">
+      <div class="c-grid2">
+        <div class="c-field"><label class="c-label">Working Days / Month</label><div class="c-input-wrap"><input type="number" class="c-input" id="workDays" value="21" oninput="calc()"/><span class="c-addon c-addon-r">days</span></div></div>
+        <div class="c-field"><label class="c-label">Hours Per Day</label><div class="c-input-wrap"><input type="number" class="c-input" id="hoursDay" value="8" oninput="calc()"/><span class="c-addon c-addon-r">hrs</span></div></div>
+      </div>
+      <div class="c-field"><label class="c-label"># of Billable Technicians</label><div class="c-sublabel">Techs + painters producing billable hours</div><div class="c-input-wrap"><input type="number" class="c-input" id="billableTechs" min="0" placeholder="0" oninput="calc()"/></div></div>
+      <div class="c-field"><label class="c-label">Utilization Rate</label><div class="c-sublabel">What % of available hours are billed to customers</div><div class="c-input-wrap"><input type="number" class="c-input" id="utilRate" min="1" max="100" value="70" oninput="calc()"/><span class="c-addon c-addon-r">%</span></div></div>
+      <div class="c-callout">
+        <strong style="color:#f5c842;font-family:'Oswald',sans-serif;letter-spacing:1px;font-size:11px;text-transform:uppercase;">Flat Rate &amp; Utilization</strong><br>
+        A skilled flat-rate technician can bill <strong style="color:#ddd">100+ labor hours in a 40-hour work week</strong> by beating published book times. Set utilization conservatively at <strong style="color:#ddd">65–75%</strong> to protect against slow periods. Shops that run busier simply earn more profit — which is the right direction to be wrong.
+      </div>
+      <div class="c-infobox" id="hoursBox" style="display:none"><span id="hoursDisplay" style="color:#f5c842;font-family:'Oswald',sans-serif"></span> realistic billable hours/month</div>
+    </div>
+  </div>
+
+</div>
+</div><!-- end calc-grid -->
+
+<!-- BOTTOM SECTION: 3 cards + centered profit goal -->
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:24px;margin-top:0">
+  <div class="c-card">
+    <div class="c-card-hdr"><span style="font-size:18px">&#127981;</span><span class="c-card-title">Environmental &amp; Compliance</span></div>
+    <div class="c-card-body">
+      <div class="c-field"><label class="c-label">Solid Waste Disposal</label><div class="c-sublabel">Dumpster service, general shop waste</div><div class="c-input-wrap"><span class="c-addon c-addon-l">$</span><input type="number" class="c-input" id="solidWaste" min="0" placeholder="0" oninput="calc()"/></div></div>
+      <div class="c-field"><label class="c-label">Hazardous Waste Disposal</label><div class="c-sublabel">Paint solids, solvents, used filters, rags</div><div class="c-input-wrap"><span class="c-addon c-addon-l">$</span><input type="number" class="c-input" id="hazWaste" min="0" placeholder="0" oninput="calc()"/></div></div>
+      <div class="c-field"><label class="c-label">EPA / Air Quality Permits</label><div class="c-sublabel">Spray booth permits, annual compliance fees</div><div class="c-input-wrap"><span class="c-addon c-addon-l">$</span><input type="number" class="c-input" id="epaPerm" min="0" placeholder="0" oninput="calc()"/></div></div>
+      <div class="c-field"><label class="c-label">Storm Water &amp; OSHA Compliance</label><div class="c-sublabel">Inspections, safety audits, PPE</div><div class="c-input-wrap"><span class="c-addon c-addon-l">$</span><input type="number" class="c-input" id="oshaCost" min="0" placeholder="0" oninput="calc()"/></div></div>
+      <div class="c-subtotal"><span>ENVIRONMENTAL SUBTOTAL</span><span id="envTotal">$0.00/mo</span></div>
+    </div>
+  </div>
+  <div class="c-card">
+    <div class="c-card-hdr"><span style="font-size:18px">&#127891;</span><span class="c-card-title">Training &amp; Certifications</span></div>
+    <div class="c-card-body">
+      <div class="c-field"><label class="c-label">I-CAR Training &amp; Annual Renewal</label><div class="c-sublabel">Per-tech fees, online and hands-on courses</div><div class="c-input-wrap"><span class="c-addon c-addon-l">$</span><input type="number" class="c-input" id="icar" min="0" placeholder="0" oninput="calc()"/></div></div>
+      <div class="c-field"><label class="c-label">OEM Certification Fees</label><div class="c-sublabel">Toyota, Tesla, Ford, GM — amortized monthly</div><div class="c-input-wrap"><span class="c-addon c-addon-l">$</span><input type="number" class="c-input" id="oemCert" min="0" placeholder="0" oninput="calc()"/></div></div>
+      <div class="c-field"><label class="c-label">OEM Recertification &amp; Audits</label><div class="c-sublabel">Annual renewal fees, facility audits</div><div class="c-input-wrap"><span class="c-addon c-addon-l">$</span><input type="number" class="c-input" id="oemRecert" min="0" placeholder="0" oninput="calc()"/></div></div>
+      <div class="c-field"><label class="c-label">Lost Production During Training</label><div class="c-sublabel">Unbillable hours while techs train</div><div class="c-input-wrap"><span class="c-addon c-addon-l">$</span><input type="number" class="c-input" id="trainLost" min="0" placeholder="0" oninput="calc()"/></div></div>
+      <div class="c-subtotal"><span>TRAINING SUBTOTAL</span><span id="trainTotal">$0.00/mo</span></div>
+    </div>
+  </div>
+  <div class="c-card">
+    <div class="c-card-hdr"><span style="font-size:18px">&#127959;</span><span class="c-card-title">Capital Reserve</span></div>
+    <div class="c-card-body">
+      <div class="c-field"><label class="c-label">Building Maintenance Reserve</label><div class="c-sublabel">Roof, HVAC, parking lot — set aside monthly</div><div class="c-input-wrap"><span class="c-addon c-addon-l">$</span><input type="number" class="c-input" id="bldgReserve" min="0" placeholder="0" oninput="calc()"/></div></div>
+      <div class="c-field"><label class="c-label">Equipment Replacement Reserve</label><div class="c-sublabel">Paint booths, frame machines, lifts</div><div class="c-input-wrap"><span class="c-addon c-addon-l">$</span><input type="number" class="c-input" id="equipReserve" min="0" placeholder="0" oninput="calc()"/></div></div>
+      <div class="c-field"><label class="c-label">Technology Upgrade Reserve</label><div class="c-sublabel">ADAS tools, scan subscriptions, EV equipment</div><div class="c-input-wrap"><span class="c-addon c-addon-l">$</span><input type="number" class="c-input" id="techReserve" min="0" placeholder="0" oninput="calc()"/></div></div>
+      <div class="c-field"><label class="c-label">Compliance Upgrade Reserve</label><div class="c-sublabel">Future regulatory or OEM facility changes</div><div class="c-input-wrap"><span class="c-addon c-addon-l">$</span><input type="number" class="c-input" id="compReserve" min="0" placeholder="0" oninput="calc()"/></div></div>
+      <div class="c-subtotal"><span>CAPITAL RESERVE SUBTOTAL</span><span id="capTotal">$0.00/mo</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- PROFIT GOAL - CENTERED BELOW 3 CARDS -->
+<div style="display:flex;justify-content:center;margin-top:0">
+  <div style="width:33.33%;min-width:280px">
+    <div class="c-card">
+    <div class="c-card-hdr"><span style="font-size:18px">&#128200;</span><span class="c-card-title">Profit Goal</span></div>
+    <div class="c-card-body">
+      <div class="c-field"><label class="c-label">Target Net Profit Margin</label><div class="c-sublabel">Default 15% — adjust to your business goals</div><div class="c-input-wrap"><input type="number" class="c-input" id="profitMargin" min="0" max="99" value="15" oninput="calc()"/><span class="c-addon c-addon-r">%</span></div></div>
+      <div class="c-note-green">
+        <strong style="color:#4caf7d;font-family:'Oswald',sans-serif;font-size:11px;letter-spacing:1px;text-transform:uppercase;">Why 15%?</strong><br>
+        The default is the minimum most advisors consider a healthy margin. Major insurance carriers post <strong style="color:#ddd">15–22% net profit margins</strong> while holding shop rates below operating cost. Your margin is recorded when you submit to the national database — this data illustrates the real financial pressure shops operate under.
+      </div>
+    </div>
+  </div>
+  </div>
+</div>
+
+<!-- EMAIL CAPTURE + DISCLAIMER - BELOW PROFIT GOAL -->
+<div style="border:1px solid rgba(245,200,66,0.35);border-top:4px solid #f5c842;background:rgba(13,22,40,0.99);border-radius:2px;padding:32px 36px;margin-top:0;" id="emailCaptureBox">
+  <div style="font-family:'Oswald',sans-serif;font-size:13px;letter-spacing:3px;color:#f5c842;text-transform:uppercase;margin-bottom:6px;">Get Your Calculated Door Rate</div>
+  <div style="font-size:14px;color:#6a7d8e;line-height:1.7;margin-bottom:16px;">Fill in your costs above, then enter your name and email below. Your calculated door rate will be revealed instantly on this page and sent to your email.</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:14px;">
+    <div>
+      <label style="display:block;font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:#7a8d9e;margin-bottom:6px;">Your Name <span style="color:#3a4a5a;font-size:9px">optional</span></label>
+      <input type="text" id="inlineName" placeholder="John Smith"
+        style="width:100%;background:rgba(0,0,0,0.5);border:1px solid rgba(201,168,76,0.18);color:#fff;padding:12px 14px;font-size:14px;font-family:'Barlow',sans-serif;outline:none;border-radius:2px;"
+        onfocus="this.style.borderColor='rgba(245,200,66,0.6)'" onblur="this.style.borderColor='rgba(201,168,76,0.18)'"/>
+    </div>
+    <div>
+      <label style="display:block;font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:#7a8d9e;margin-bottom:6px;">Email Address <span style="color:#c05050;font-size:9px">required</span></label>
+      <input type="email" id="inlineEmail" placeholder="you@yourshop.com"
+        style="width:100%;background:rgba(0,0,0,0.5);border:1px solid rgba(201,168,76,0.18);color:#fff;padding:12px 14px;font-size:14px;font-family:'Barlow',sans-serif;outline:none;border-radius:2px;"
+        onfocus="this.style.borderColor='rgba(245,200,66,0.6)'" onblur="this.style.borderColor='rgba(201,168,76,0.18)'"
+        oninput="checkInlineBtn()"/>
+    </div>
+    <div>
+      <label style="display:block;font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:#7a8d9e;margin-bottom:6px;">Shop Name <span style="color:#3a4a5a;font-size:9px">optional</span></label>
+      <input type="text" id="inlineShop" placeholder="ABC Auto Body"
+        style="width:100%;background:rgba(0,0,0,0.5);border:1px solid rgba(201,168,76,0.18);color:#fff;padding:12px 14px;font-size:14px;font-family:'Barlow',sans-serif;outline:none;border-radius:2px;"
+        onfocus="this.style.borderColor='rgba(245,200,66,0.6)'" onblur="this.style.borderColor='rgba(201,168,76,0.18)'"/>
+    </div>
+    <div>
+      <label style="display:block;font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:#7a8d9e;margin-bottom:6px;">State <span style="color:#3a4a5a;font-size:9px">optional</span></label>
+      <select id="inlineState" style="width:100%;background:rgba(0,0,0,0.5);border:1px solid rgba(201,168,76,0.18);color:#fff;padding:12px 14px;font-size:14px;font-family:'Barlow',sans-serif;outline:none;border-radius:2px;">
+        <option value="">Select state...</option>
+        <option>AL</option><option>AK</option><option>AZ</option><option>AR</option><option>CA</option><option>CO</option><option>CT</option><option>DE</option><option>FL</option><option>GA</option><option>HI</option><option>ID</option><option>IL</option><option>IN</option><option>IA</option><option>KS</option><option>KY</option><option>LA</option><option>ME</option><option>MD</option><option>MA</option><option>MI</option><option>MN</option><option>MS</option><option>MO</option><option>MT</option><option>NE</option><option>NV</option><option>NH</option><option>NJ</option><option>NM</option><option>NY</option><option>NC</option><option>ND</option><option>OH</option><option>OK</option><option>OR</option><option>PA</option><option>RI</option><option>SC</option><option>SD</option><option>TN</option><option>TX</option><option>UT</option><option>VT</option><option>VA</option><option>WA</option><option>WV</option><option>WI</option><option>WY</option>
+      </select>
+    </div>
+    <div>
+      <label style="display:block;font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:#7a8d9e;margin-bottom:6px;">Avg Insurance Rate You Accept <span style="color:#3a4a5a;font-size:9px">optional</span></label>
+      <div style="display:flex;">
+        <span style="background:rgba(255,200,50,0.1);border:1px solid rgba(255,200,50,0.2);border-right:none;padding:12px 10px;font-size:13px;color:#f5c842;font-family:'Oswald',sans-serif;">$</span>
+        <input type="number" id="inlineInsRate" placeholder="e.g. 62" min="0"
+          style="flex:1;background:rgba(0,0,0,0.5);border:1px solid rgba(201,168,76,0.18);border-left:none;color:#fff;padding:12px 14px;font-size:14px;font-family:'Barlow',sans-serif;outline:none;border-radius:0 2px 2px 0;"
+          onfocus="this.style.borderColor='rgba(245,200,66,0.6)'" onblur="this.style.borderColor='rgba(201,168,76,0.18)'"/>
+        <span style="background:rgba(255,200,50,0.1);border:1px solid rgba(255,200,50,0.2);border-left:none;padding:12px 10px;font-size:13px;color:#f5c842;font-family:'Oswald',sans-serif;">/hr</span>
+      </div>
+    </div>
+  </div>
+  <div style="margin-bottom:16px;">
+    <button id="inlineSubmitBtn" onclick="submitInlineEmail()" style="width:100%;background:linear-gradient(135deg,#f5c842,#e8a020);border:none;color:#000;font-family:'Oswald',sans-serif;font-size:14px;letter-spacing:3px;text-transform:uppercase;padding:15px;cursor:not-allowed;pointer-events:none;border-radius:2px;font-weight:700;opacity:0.3;transition:all 0.2s;">
+      Reveal My Door Rate
+    </button>
+  </div>
+  <div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:16px;">
+    <input type="checkbox" id="inlineOptIn" checked
+      style="width:15px;height:15px;margin-top:2px;flex-shrink:0;accent-color:#f5c842;opacity:0.4;cursor:pointer;"/>
+    <label for="inlineOptIn" style="font-size:11px;color:#3a4a5a;line-height:1.6;cursor:pointer;">Yes, send me occasional tips on increasing shop revenue from Aequus Claims. Unsubscribe any time.</label>
+  </div>
+  <div id="emailSubmittedNote" style="display:none;margin-bottom:14px;background:rgba(76,175,125,0.1);border:1px solid rgba(76,175,125,0.25);border-radius:2px;padding:12px 16px;font-size:13px;color:#4caf7d;">
+    &#10003; Your results are now visible below. A copy has been sent to your email.
+  </div>
+  <!-- DISCLAIMER -->
+  <div style="border-top:1px solid rgba(255,255,255,0.05);padding-top:14px;margin-top:4px;">
+    <div style="font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:#446;margin-bottom:6px;">Important Disclaimer</div>
+    <div style="font-size:11px;color:#2e3e4e;line-height:1.8;">The door rate calculated by this tool is based solely on the cost data you enter and is intended for general business awareness purposes only. It is not financial, legal, or accounting advice. Every shop's financial situation is unique. <strong style="color:#3a5060;">We strongly recommend consulting a licensed CPA or financial advisor</strong> to determine the appropriate labor rate for your specific business, tax situation, and market conditions. Aequus Claims is not an accounting firm and makes no representations regarding the accuracy or suitability of this calculation for any specific business purpose. Actual results will vary.</div>
+  </div>
+</div>
+
+<!-- RESULTS SUMMARY BOX -->
+<div id="summaryBox" style="display:none;border:1px solid rgba(245,200,66,0.25);border-top:3px solid #f5c842;background:rgba(245,200,66,0.03);border-radius:2px;padding:28px 32px;margin-top:24px;">
+  <div style="font-family:'Oswald',sans-serif;font-size:12px;letter-spacing:3px;color:#f5c842;text-transform:uppercase;margin-bottom:20px;">Your Results Summary</div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:16px;margin-bottom:20px;">
+    <div style="padding:16px;background:rgba(0,0,0,0.25);border:1px solid rgba(255,200,50,0.1);border-radius:2px;text-align:center;">
+      <div style="font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:#666;margin-bottom:6px;">Your Door Rate</div>
+      <div style="font-family:'Oswald',sans-serif;font-size:36px;font-weight:700;color:#f5c842;" id="sum_door">--</div>
+      <div style="font-size:11px;color:#555;margin-top:4px;">per billable hour</div>
+    </div>
+    <div style="padding:16px;background:rgba(0,0,0,0.25);border:1px solid rgba(255,200,50,0.1);border-radius:2px;text-align:center;">
+      <div style="font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:#666;margin-bottom:6px;">Monthly Costs</div>
+      <div style="font-family:'Oswald',sans-serif;font-size:28px;font-weight:700;color:#ccc;" id="sum_costs">--</div>
+      <div style="font-size:11px;color:#555;margin-top:4px;">total overhead</div>
+    </div>
+    <div style="padding:16px;background:rgba(0,0,0,0.25);border:1px solid rgba(255,200,50,0.1);border-radius:2px;text-align:center;">
+      <div style="font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:#666;margin-bottom:6px;">Billable Hours/Mo</div>
+      <div style="font-family:'Oswald',sans-serif;font-size:28px;font-weight:700;color:#ccc;" id="sum_hours">--</div>
+      <div style="font-size:11px;color:#555;margin-top:4px;">at your utilization rate</div>
+    </div>
+    <div style="padding:16px;background:rgba(0,0,0,0.25);border:1px solid rgba(255,200,50,0.1);border-radius:2px;text-align:center;">
+      <div style="font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:#666;margin-bottom:6px;">Projected Monthly Revenue</div>
+      <div style="font-family:'Oswald',sans-serif;font-size:28px;font-weight:700;color:#4caf7d;" id="sum_rev">--</div>
+      <div style="font-size:11px;color:#555;margin-top:4px;">at your door rate</div>
+    </div>
+    <div style="padding:16px;background:rgba(0,0,0,0.25);border:1px solid rgba(255,200,50,0.1);border-radius:2px;text-align:center;">
+      <div style="font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:#666;margin-bottom:6px;">Projected Monthly Profit</div>
+      <div style="font-family:'Oswald',sans-serif;font-size:28px;font-weight:700;color:#4caf7d;" id="sum_profit">--</div>
+      <div style="font-size:11px;color:#555;margin-top:4px;">after all costs</div>
+    </div>
+    <div style="padding:16px;background:rgba(0,0,0,0.25);border:1px solid rgba(255,200,50,0.1);border-radius:2px;text-align:center;">
+      <div style="font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:#666;margin-bottom:6px;">Break-Even Rate</div>
+      <div style="font-family:'Oswald',sans-serif;font-size:28px;font-weight:700;color:#ccc;" id="sum_breakeven">--</div>
+      <div style="font-size:11px;color:#555;margin-top:4px;">before profit margin</div>
+    </div>
+  </div>
+  <div style="border-top:1px solid rgba(255,200,50,0.1);padding-top:16px;font-size:12px;color:#556;line-height:1.7;">
+    Based on the costs and utilization rate you entered. Adjust any field above to instantly update your results.
+    The Rate Gap Analysis below shows what accepting less than your door rate costs you on every repair order.
+  </div>
+</div>
+
+<div class="c-nat" id="nationalPanel">
+  <div class="c-nat-title">&#128202; National Rate Database</div>
+  <div class="c-nat-sub">Anonymous, shop-submitted data. Every submission strengthens the case for fair labor rate reform in legislation, litigation, and public advocacy.</div>
+  <div class="c-nat-grid" style="grid-template-columns:repeat(auto-fit,minmax(160px,1fr))">
+    <div class="c-nat-item">
+      <div class="c-nat-lbl">National Avg Door Rate</div>
+      <div class="c-nat-val" id="nat_avg">--</div>
+      <div class="c-nat-s" id="nat_count">Loading...</div>
+    </div>
+    <div class="c-nat-item">
+      <div class="c-nat-lbl">Avg Insurance Rate Accepted</div>
+      <div class="c-nat-val" id="nat_ins_avg">--</div>
+      <div class="c-nat-s">avg rate shops accept</div>
+    </div>
+    <div class="c-nat-item">
+      <div class="c-nat-lbl">Avg Gap Per Hour</div>
+      <div class="c-nat-val" id="nat_gap" style="color:#e05c5c">--</div>
+      <div class="c-nat-s">door rate vs insurance</div>
+    </div>
+    <div class="c-nat-item" id="yourRateBox" style="border-color:rgba(245,200,66,0.4);background:rgba(245,200,66,0.06);">
+      <div class="c-nat-lbl" style="color:#f5c842">Your Calculated Rate</div>
+      <div class="c-nat-val" id="nat_your_rate" style="color:#f5c842">--</div>
+      <div class="c-nat-s" id="nat_your_label">Enter your costs above</div>
+    </div>
+  </div>
+
+  <!-- DISCLAIMER -->
+  <div style="background:rgba(245,200,66,0.04);border:1px solid rgba(245,200,66,0.12);border-left:3px solid rgba(245,200,66,0.4);border-radius:2px;padding:14px 18px;margin-bottom:20px;font-size:12px;color:#556;line-height:1.8;">
+    <strong style="color:#888;font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;">Important Disclaimer</strong><br>
+    The door rate calculated by this tool is based solely on the cost data you enter and is intended for general business awareness purposes only. It is not financial, legal, or accounting advice.
+    Every shop's financial situation is unique. <strong style="color:#777;">We strongly recommend consulting a licensed CPA or financial advisor</strong> to determine the appropriate labor rate for your specific business, tax situation, and market conditions.
+    Aequus Claims is not an accounting firm and makes no representations regarding the accuracy or suitability of this calculation for any specific business purpose.
+    Actual results will vary. Industry averages shown are based on self-reported data and published industry reports.
+  </div>
+  <div id="regTableWrap" style="display:none;margin-bottom:20px">
+    <div style="font-family:'Oswald',sans-serif;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#555;margin-bottom:8px">Averages by Region</div>
+    <table class="c-reg-table"><thead><tr><th>Region</th><th>Avg Door Rate</th><th>Submissions</th></tr></thead><tbody id="regBody"></tbody></table>
+  </div>
+  
+    
+    
+    
+  </div>
+  <div class="c-nat-disc"><strong style="color:#555">Privacy:</strong> Fully anonymous. No shop name, address, or contact information collected. Data maintained by Aequus Claims for industry education and advocacy.</div>
+</div>
+
+<!-- CTA -->
+<div class="c-cta" id="ctaPanel">
+  <div class="c-cta-ey">Aequus Claims &nbsp;&middot;&nbsp; Professional Estimate Writing</div>
+  <div class="c-cta-h">You Can't Fix the<br>Rate Fight Tonight.</div>
+  <div class="c-cta-bridge">
+    The gap your calculator just showed you is real. For most shops it took decades of insurance industry pressure to get here — and it will not be closed in a single conversation with an adjuster. That fight is worth having, but it is a long one.<br><br>
+    There is a second gap though. One that exists entirely inside your own estimates, at whatever rate you are already being paid. <strong style="color:#ddd">Operations you performed. Procedures you followed. Work you did — and never billed.</strong> That gap you can close starting on your next repair order.
+  </div>
+  <div class="c-cta-body">Industry data shows the average estimate leaves <strong style="color:#ddd">$1,500–$2,500 in legitimate, payable operations unbilled</strong> — not because insurers refused them, but because they were never written. This is not about fighting your insurer. <strong style="color:#ddd">It is about billing completely for the work your shop already does.</strong></div>
+  <div class="c-stat-grid">
+    <div class="c-stat-card" style="border:1px solid rgba(245,200,66,0.3);border-top:3px solid #f5c842;background:rgba(245,200,66,0.04)">
+      <div class="c-stat-lbl">Net Gain Per Estimate</div><div class="c-stat-num" style="color:#f5c842">$1,583*</div>
+      <div class="c-stat-s">Avg net gain after fee — results vary</div>
+    </div>
+    <div class="c-stat-card" style="border:1px solid rgba(76,175,125,0.3);border-top:3px solid #4caf7d;background:rgba(76,175,125,0.05)">
+      <div class="c-stat-lbl">Annual Net Gain — 100 RO/yr</div><div class="c-stat-num" style="color:#4caf7d">$158,300*</div>
+      <div class="c-stat-s">Based on avg — results vary by shop volume</div>
+    </div>
+    <div class="c-stat-card" style="border:1px solid rgba(92,158,224,0.2);border-top:3px solid #5c9ee0;background:rgba(92,158,224,0.03)">
+      <div class="c-stat-lbl">Aequus Fee — Documented</div><div class="c-stat-num" style="color:#5c9ee0">$395</div>
+      <div class="c-stat-s">OEM procedures included</div>
+    </div>
+    <div class="c-stat-card" style="border:1px solid rgba(255,255,255,0.06);border-top:3px solid #444;background:rgba(0,0,0,0.2)">
+      <div class="c-stat-lbl">Avg Left Off Each Estimate</div><div class="c-stat-num" style="color:#888">$1,978</div>
+      <div class="c-stat-s">Conservative industry average</div>
+    </div>
+    <div class="c-stat-card" style="border:1px solid rgba(255,255,255,0.06);border-top:3px solid #444;background:rgba(0,0,0,0.2)">
+      <div class="c-stat-lbl">Annual Uncollected — 100 RO/yr</div><div class="c-stat-num" style="color:#e05c5c">$197,800</div>
+      <div class="c-stat-s">Revenue earned, never billed</div>
+    </div>
+  </div>
+  <div class="c-what"><strong style="color:#f5c842;font-family:'Oswald',sans-serif;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;">Every Estimate Includes</strong><br>
+    Every billable operation identified &nbsp;&middot;&nbsp; OEM manufacturer procedures attached &nbsp;&middot;&nbsp; Position statements for challenged operations &nbsp;&middot;&nbsp; Documentation that turns "we don't pay that" into an approved line &nbsp;&middot;&nbsp; CCC, Mitchell &amp; Audatex formatted
+  </div>
+  <div style="font-family:'Oswald',sans-serif;font-size:12px;letter-spacing:2px;text-transform:uppercase;color:#888;margin-bottom:14px">Request a Free Consultation</div>
+  <div class="c-cta-form-grid" id="ctaForm">
+    <div class="c-cta-field"><label>Your Name <span style="color:#444;font-size:9px">optional</span></label><input type="text" id="cta_name" placeholder="John Smith"/></div>
+    <div class="c-cta-field"><label>Shop Name <span style="color:#444;font-size:9px">optional</span></label><input type="text" id="cta_shop" placeholder="ABC Auto Body"/></div>
+    <div class="c-cta-field"><label>Email <span style="color:#e05c5c;font-size:9px">required</span></label><input type="email" id="cta_email" placeholder="you@shop.com" oninput="updateCTABtn()"/></div>
+    <div class="c-cta-field"><label>Phone <span style="color:#444;font-size:9px">optional</span></label><input type="tel" id="cta_phone" placeholder="(555) 000-0000"/></div>
+    <div class="c-cta-field"><label>State <span style="color:#444;font-size:9px">optional</span></label>
+      <select id="cta_state">
+        <option value="">Select...</option>
+        <option>AL</option><option>AK</option><option>AZ</option><option>AR</option><option>CA</option><option>CO</option><option>CT</option><option>DE</option><option>FL</option><option>GA</option><option>HI</option><option>ID</option><option>IL</option><option>IN</option><option>IA</option><option>KS</option><option>KY</option><option>LA</option><option>ME</option><option>MD</option><option>MA</option><option>MI</option><option>MN</option><option>MS</option><option>MO</option><option>MT</option><option>NE</option><option>NV</option><option>NH</option><option>NJ</option><option>NM</option><option>NY</option><option>NC</option><option>ND</option><option>OH</option><option>OK</option><option>OR</option><option>PA</option><option>RI</option><option>SC</option><option>SD</option><option>TN</option><option>TX</option><option>UT</option><option>VT</option><option>VA</option><option>WA</option><option>WV</option><option>WI</option><option>WY</option>
+      </select>
+    </div>
+    <div class="c-cta-field"><label>Monthly ROs <span style="color:#444;font-size:9px">optional</span></label><input type="number" id="cta_ros" placeholder="e.g. 40" min="1"/></div>
+  </div>
+  <div style="margin-bottom:16px">
+    <label style="display:block;font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:#666;margin-bottom:4px">Service Interest <span style="font-size:9px;color:#444;text-transform:none;font-family:'Barlow',sans-serif;letter-spacing:0">optional</span></label>
+    <select id="cta_tier" style="width:100%;background:rgba(0,0,0,0.4);border:1px solid rgba(255,200,50,0.2);color:#fff;padding:10px 14px;font-size:14px;font-family:'Barlow',sans-serif;outline:none;border-radius:2px">
+      <option value="">Not sure yet — just want to talk</option>
+      <option value="standard">Standard ($275) — Complete estimate</option>
+      <option value="documented">Documented ($395) — With OEM procedures</option>
+      <option value="expert">Expert ($550) — Full supplement support</option>
+      <option value="volume">Volume / Retainer — 10+ per month</option>
+    </select>
+  </div>
+  <button class="c-btn-cta" id="ctaBtn" onclick="submitCTA()" disabled>Request My Free Consultation</button>
+  <div class="c-cta-success" id="ctaSuccess">
+    <strong style="font-family:'Oswald',sans-serif;letter-spacing:1px">&#10003; Request Received</strong><br><br>
+    Thank you. Oscar will be in touch within one business day. In the meantime, consider submitting your rates to the national database above.
+  </div>
+  <div class="c-disc"><strong style="color:#555">Disclaimer:</strong> Average figures based on industry data. Actual results vary by vehicle, damage severity, insurer, and current estimating practices. Aequus Claims does not guarantee specific revenue outcomes. Self-reported cost data for educational purposes only. Not legal or financial advice. By submitting the consultation form you agree to be contacted by Aequus Claims. &copy; Aequus Claims.</div>
+</div>
+
+<div class="c-placeholder" id="placeholder">Fill in your costs above to calculate your door rate</div>
+
+</div><!-- calc-container -->
+</div><!-- calc-wrap -->
+
+
+<footer>
+  <div class="footer-inner">
+    <div>
+      <div class="footer-logo"><img src="data:image/png;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/2wBDAQUFBQcGBw4ICA4eFBEUHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCANABcADASIAAhEBAxEB/8QAHAABAAMBAQEBAQAAAAAAAAAAAAQFBgMCAQcI/8QAUBABAAIBAgIECQULCAoDAAMAAAECAwQRBSESMUFRBhMiYXGBkbHRFBWSk6EyQlJUYnJzssHS4iM0NVOCosLwBxYkJTNDRGODs2R04UWEo//EABkBAQADAQEAAAAAAAAAAAAAAAABAgMEBf/EACgRAQACAgEDBQACAwEBAAAAAAABAgMREhMhMQQiMkFRM2EUI0JScf/aAAwDAQACEQMRAD8A/jIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA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AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAf/Z" alt="Aequus Claims" /></div>
+      <div class="footer-tagline">Fair Estimates. Safe Repairs. Full Payment.<br><br>
+      Aequus — from the Latin meaning Fair and Just.<br>
+      100% on the shop's side. Every estimate. Every time.</div>
+    </div>
+    <div>
+      <div class="footer-col-title">Navigation</div>
+      <div class="footer-links">
+        <a href="index.html">Home</a>
+        <a href="about.html">About Oscar Hoyt</a>
+        <a href="services.html">Services &amp; Pricing</a>
+        <a href="why.html">Why Aequus</a>
+        <a href="calculator.html">Door Rate Calculator</a>
+        <a href="contact.html">Contact</a>
+      </div>
+    </div>
+    <div>
+      <div class="footer-col-title">Contact</div>
+      <div class="footer-contact-item">Oscar A. Hoyt IV</div>
+      <div class="footer-contact-item">North Texas</div>
+      <div class="footer-contact-item"><a href="tel:9729980189" style="color:var(--gold)">(972) 998-0189</a></div>
+      <div class="footer-contact-item"><a href="mailto:Oscar@aequusclaims.com" style="color:var(--gold)">Oscar@aequusclaims.com</a></div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div class="footer-copy">&copy; 2025 Aequus Claims. All rights reserved. North Texas.</div>
+    <div class="footer-credentials">
+      <span class="footer-cred">I-CAR Gold Appraiser</span>
+      <span class="footer-cred">TX Licensed Adjuster</span>
+      <span class="footer-cred">35+ Years Industry</span>
+    </div>
+  </div>
+</footer>
+<script>
+  // Active nav
+  const path = window.location.pathname.split('/').pop() || 'index.html';
+  document.querySelectorAll('.nav-links a:not(.nav-cta)').forEach(a => {
+    if(a.getAttribute('href') === path) a.classList.add('active');
+  });
+</script>
+
+<script>
+// ── GLOBALS ──────────────────────────────────────────────────────────────────
+var _door = 0, _hours = 0;
+var SHEET_URL = 'https://script.google.com/macros/s/AKfycbzdGmIDM7XIBsrw46AZM9IKsE6rVuQZFJms_QeEUjhxWjYXvFn3mKNRoWDUfjbe-x5ZRg/exec';
+
+// ── UTILITIES ─────────────────────────────────────────────────────────────────
+function v(id) {
+  var el = document.getElementById(id);
+  return el ? (parseFloat(el.value) || 0) : 0;
+}
+function fmt(n) {
+  return n.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
+}
+function fmtI(n) {
+  return Math.round(n).toLocaleString('en-US');
+}
+function set(id, val) {
+  var el = document.getElementById(id);
+  if (el) el.textContent = val;
+}
+
+// ── MAIN CALC ─────────────────────────────────────────────────────────────────
+function calc() {
+  var days = v('workDays'), hrs = v('hoursDay');
+
+  // Facility
+  var fac = v('rent') + v('utilities') + v('phone') + v('propIns') +
+            v('equipLease') + v('equipMaint');
+
+  // Labor
+  var gw = v('numTechs') * v('techWage') * hrs * days +
+           v('numPainters') * v('painterWage') * hrs * days +
+           v('numEstimators') * v('estimatorSalary') +
+           v('adminSalary') + v('ownerSalary') + v('supportStaff');
+  var lab = gw + (gw * (v('payrollTax') / 100)) + v('benefits') + v('workersComp');
+
+  // Overhead
+  var ov = v('software') + v('marketing') + v('accounting') + v('misc');
+
+  // Environmental
+  var env = v('solidWaste') + v('hazWaste') + v('epaPerm') + v('oshaCost');
+
+  // Training
+  var train = v('icar') + v('oemCert') + v('oemRecert') + v('trainLost');
+
+  // Capital
+  var cap = v('bldgReserve') + v('equipReserve') + v('techReserve') + v('compReserve');
+
+  // Totals
+  var tc = fac + lab + ov + env + train + cap;
+  var util = v('utilRate');
+  _hours = v('billableTechs') * hrs * days * (util / 100);
+  var base = _hours > 0 ? tc / _hours : 0;
+  var margin = v('profitMargin');
+  _door = (margin < 100 && base > 0) ? base / (1 - margin / 100) : base;
+  var rev = _door * _hours;
+  var profit = rev - tc;
+
+  // Update subtotals
+  set('facilityTotal', '$' + fmt(fac) + '/mo');
+  set('laborTotal', '$' + fmt(lab) + '/mo');
+  set('overheadTotal', '$' + fmt(ov) + '/mo');
+  set('envTotal', '$' + fmt(env) + '/mo');
+  set('trainTotal', '$' + fmt(train) + '/mo');
+  set('capTotal', '$' + fmt(cap) + '/mo');
+
+  // Billable hours info
+  var hb = document.getElementById('hoursBox');
+  if (hb) hb.style.display = _hours > 0 ? 'block' : 'none';
+  set('hoursDisplay', fmtI(_hours));
+
+  var show = _door > 0 && _hours > 0;
+
+  // Check if email submitted
+  var note = document.getElementById('emailSubmittedNote');
+  var emailDone = note && note.style.display === 'block';
+
+  // Show results only after email submitted
+  var rp = document.getElementById('resultsPanel');
+  var gp = document.getElementById('gapPanel');
+  var hb2 = document.getElementById('headerBadge');
+  var ph = document.getElementById('placeholder');
+
+  if (rp) rp.className = (show && emailDone) ? 'c-results visible' : 'c-results';
+  if (gp) gp.className = (show && emailDone) ? 'c-gap visible' : 'c-gap';
+  if (hb2) hb2.style.display = (show && emailDone) ? 'block' : 'none';
+  if (ph) ph.style.display = (show && !emailDone) ? 'none' : (show ? 'none' : 'block');
+
+  if (show) {
+    // Update header badge
+    set('badgeRate', '$' + fmt(_door));
+    set('capDoorRate', '$' + fmt(_door) + '/hr');
+
+    // Update results panel
+    set('r_facility', '$' + fmt(fac));
+    set('r_labor', '$' + fmt(lab));
+    set('r_overhead', '$' + fmt(ov));
+    set('r_env', '$' + fmt(env));
+    set('r_train', '$' + fmt(train));
+    set('r_cap', '$' + fmt(cap));
+    set('r_total', '$' + fmt(tc));
+    set('r_hours', fmtI(_hours));
+    set('r_breakeven', '$' + fmt(base) + '/hr');
+    set('r_revenue', '$' + fmt(rev));
+    set('r_profit', '$' + fmt(profit));
+    set('r_util', util + '%');
+    var dr = document.getElementById('r_doorRate');
+    if (dr) dr.innerHTML = '$' + fmt(_door) + '<span style="font-size:18px;color:#a08820">/hr</span>';
+
+    // Update summary box
+    var sb = document.getElementById('summaryBox');
+    if (sb) sb.style.display = 'block';
+    set('sum_door', '$' + fmt(_door) + '/hr');
+    set('sum_costs', '$' + fmt(tc));
+    set('sum_hours', fmtI(_hours));
+    set('sum_rev', '$' + fmt(rev));
+    set('sum_profit', '$' + fmt(profit));
+    set('sum_breakeven', '$' + fmt(base) + '/hr');
+
+    // Update your rate in national panel
+    set('nat_your_rate', '$' + fmt(_door) + '/hr');
+    set('nat_your_label', 'Based on your costs above');
+
+    calcGap();
+  }
+}
+
+// ── GAP CALC ──────────────────────────────────────────────────────────────────
+function calcGap() {
+  if (_door <= 0) return;
+  var cur = v('currentRate'), ins = v('insRate');
+
+  if (cur > 0) {
+    var gd = _door - cur, ml = gd * _hours;
+    set('g_door_gap', '$' + fmt(Math.abs(gd)) + '/hr ' + (gd > 0 ? 'below' : 'above'));
+    set('g_monthly_loss', (ml > 0 ? '-' : '') + '$' + fmt(Math.abs(ml)));
+    set('g_annual_loss', (ml > 0 ? '-' : '') + '$' + fmt(Math.abs(ml * 12)));
+    var dg = document.getElementById('g_door_gap');
+    var ml_el = document.getElementById('g_monthly_loss');
+    var al_el = document.getElementById('g_annual_loss');
+    if (dg) dg.style.color = gd > 0 ? '#e05c5c' : '#4caf7d';
+    if (ml_el) ml_el.style.color = ml > 0 ? '#e05c5c' : '#4caf7d';
+    if (al_el) al_el.style.color = ml > 0 ? '#e05c5c' : '#4caf7d';
+  } else {
+    set('g_door_gap', 'Enter current rate');
+    set('g_monthly_loss', '--');
+    set('g_annual_loss', '--');
+  }
+
+  if (ins > 0) {
+    var ig = _door - ins, ia = ig * _hours * 12;
+    set('g_ins_gap', '$' + fmt(Math.abs(ig)) + '/hr ' + (ig > 0 ? 'below' : 'above'));
+    set('g_ins_annual', (ia > 0 ? '-' : '') + '$' + fmt(Math.abs(ia)));
+    var ig_el = document.getElementById('g_ins_gap');
+    var ia_el = document.getElementById('g_ins_annual');
+    if (ig_el) ig_el.style.color = ig > 0 ? '#e05c5c' : '#4caf7d';
+    if (ia_el) ia_el.style.color = ia > 0 ? '#e05c5c' : '#4caf7d';
+  } else {
+    set('g_ins_gap', 'Enter ins. rate');
+    set('g_ins_annual', '--');
+  }
+
+  set('g_true_rev', '$' + fmt(_door * _hours));
+
+  // Bar chart
+  var maxR = Math.max(_door, ins || 0, cur || 0) * 1.18 || 200;
+  var insR = ins > 0 ? ins : 62;
+  var bi = document.getElementById('barIns');
+  var bc = document.getElementById('barCur');
+  var bd = document.getElementById('barDoor');
+  if (bi) bi.style.width = Math.min((insR / maxR) * 100, 100) + '%';
+  set('barInsLbl', '$' + fmt(insR) + '/hr');
+  if (cur > 0 && bc) bc.style.width = Math.min((cur / maxR) * 100, 100) + '%';
+  set('barCurLbl', cur > 0 ? '$' + fmt(cur) + '/hr' : '');
+  if (bd) bd.style.width = Math.min((_door / maxR) * 100, 100) + '%';
+  set('barDoorLbl', '$' + fmt(_door) + '/hr');
+
+  calcLPJ();
+}
+
+// ── LOSS PER JOB ──────────────────────────────────────────────────────────────
+function calcLPJ() {
+  if (_door <= 0) return;
+  var sev = v('avgSeverity'), lp = v('laborPct');
+  var laborRO = sev * (lp / 100);
+  var hrsRO = _door > 0 ? laborRO / _door : 0;
+  var cur = v('currentRate'), ins = v('insRate');
+  var refRate = cur > 0 ? cur : (ins > 0 ? ins : 0);
+  var loss = refRate > 0 ? (_door - refRate) * hrsRO : 0;
+  set('lpj_labor', '$' + fmt(laborRO));
+  set('lpj_hrs', fmt(hrsRO) + ' hrs');
+  set('lpj_loss', refRate > 0 ? '-$' + fmt(loss) : 'Enter rate');
+  set('lpj_annual', refRate > 0 ? '-$' + fmt(loss * 100) : '--');
+  var lw = document.getElementById('lpjWrap');
+  if (lw) lw.style.display = _hours > 0 ? 'block' : 'none';
+}
+
+// ── NATIONAL DB ───────────────────────────────────────────────────────────────
+var REGIONS = {
+  'Northeast': ['CT','ME','MA','NH','NJ','NY','PA','RI','VT'],
+  'Southeast': ['AL','AR','FL','GA','KY','LA','MD','MS','NC','SC','TN','VA','WV','DE'],
+  'Midwest':   ['IL','IN','IA','KS','MI','MN','MO','NE','ND','OH','SD','WI'],
+  'Southwest': ['AZ','NM','OK','TX'],
+  'West':      ['AK','CA','CO','HI','ID','MT','NV','OR','UT','WA','WY']
+};
+
+function getRegion(s) {
+  for (var r in REGIONS) {
+    if (REGIONS[r].indexOf(s) > -1) return r;
+  }
+  return 'Other';
+}
+
+function renderNational() {
+  // Fetch from Leads sheet via a special doGet call
+  fetch(SHEET_URL + '?sheet=leads')
+    .then(function(r) { return r.json(); })
+    .then(function(json) {
+      var db = json.data || [];
+      if (!db.length) {
+        set('nat_avg', '--');
+        set('nat_gap', '--');
+        set('nat_count', 'No submissions yet');
+        return;
+      }
+
+      // Parse numeric values from "$XX.XX/hr" format
+      function parseRate(val) {
+        if (!val) return 0;
+        return parseFloat(String(val).replace(/[$\/hr\s]/g,'')) || 0;
+      }
+
+      // Get valid door rates and insurance rates
+      var doorRates = [], insRates = [], diffs = [];
+      db.forEach(function(r) {
+        var d = parseRate(r['Calculated Door Rate'] || r['Calculated Door']);
+        var i = parseRate(r['Avg Ins Rate'] || r['Avg Insurance Rate']);
+        var diff = parseRate(r['Difference']);
+        if (d > 0) doorRates.push(d);
+        if (i > 0) insRates.push(i);
+        if (diff !== 0) diffs.push(Math.abs(diff));
+      });
+
+      if (!doorRates.length) {
+        set('nat_count', 'No valid data yet');
+        return;
+      }
+
+      var avgDoor = doorRates.reduce(function(a,b){return a+b;},0) / doorRates.length;
+      var avgIns  = insRates.length ? insRates.reduce(function(a,b){return a+b;},0) / insRates.length : 62;
+      var avgDiff = diffs.length ? diffs.reduce(function(a,b){return a+b;},0) / diffs.length : (avgDoor - avgIns);
+
+      set('nat_avg', '$' + fmt(avgDoor) + '/hr');
+      set('nat_gap', '$' + fmt(avgDiff) + '/hr');
+      set('nat_count', doorRates.length + ' shop' + (doorRates.length !== 1 ? 's' : '') + ' nationwide');
+
+      // Regional breakdown
+      var byR = {};
+      db.forEach(function(r) {
+        var rate = parseRate(r['Calculated Door Rate'] || r['Calculated Door']);
+        if (!rate) return;
+        var state = r['State'] || '';
+        var rg = getRegion(state);
+        if (!byR[rg]) byR[rg] = [];
+        byR[rg].push(rate);
+      });
+      var tb = document.getElementById('regBody');
+      if (tb) {
+        tb.innerHTML = '';
+        Object.keys(byR).sort().forEach(function(rg) {
+          var rs = byR[rg];
+          var ra = rs.reduce(function(a,b){return a+b;},0) / rs.length;
+          var tr = document.createElement('tr');
+          tr.innerHTML = '<td>' + rg + '</td><td class="rc">$' + fmt(ra) + '/hr</td><td class="sc">' + rs.length + ' shop' + (rs.length!==1?'s':'') + '</td>';
+          tb.appendChild(tr);
+        });
+        var rw = document.getElementById('regTableWrap');
+        if (rw) rw.style.display = Object.keys(byR).length > 0 ? 'block' : 'none';
+      }
+
+      // Update avg ins rate box if it exists
+      var ni = document.getElementById('nat_ins_avg');
+      if (ni) ni.textContent = insRates.length ? '$' + fmt(avgIns) + '/hr' : '--';
+    })
+    .catch(function(e) { /* unavailable locally */ });
+}
+
+// ── EMAIL GATE ────────────────────────────────────────────────────────────────
+function checkInlineBtn() {
+  var email = document.getElementById('inlineEmail').value.trim();
+  var btn = document.getElementById('inlineSubmitBtn');
+  if (!btn) return;
+  var valid = email.length > 3 && email.indexOf('@') > -1;
+  btn.style.opacity = valid ? '1' : '0.3';
+  btn.style.cursor = valid ? 'pointer' : 'not-allowed';
+  btn.style.pointerEvents = valid ? 'auto' : 'none';
+}
+
+function submitInlineEmail() {
+  var email   = document.getElementById('inlineEmail').value.trim();
+  if (!email || email.indexOf('@') < 0) return;
+  var name    = document.getElementById('inlineName')    ? document.getElementById('inlineName').value.trim()    : '';
+  var shop    = document.getElementById('inlineShop')    ? document.getElementById('inlineShop').value.trim()    : '';
+  var state   = document.getElementById('inlineState')   ? document.getElementById('inlineState').value          : '';
+  var optIn   = document.getElementById('inlineOptIn')   ? document.getElementById('inlineOptIn').checked        : false;
+  var insRate = document.getElementById('inlineInsRate') ? parseFloat(document.getElementById('inlineInsRate').value) || 0 : 0;
+  var btn = document.getElementById('inlineSubmitBtn');
+  if (btn) { btn.textContent = 'Saved!'; btn.style.opacity = '0.7'; btn.style.pointerEvents = 'none'; }
+
+  fetch(SHEET_URL, {
+    method: 'POST',
+    body: JSON.stringify({
+      calcLead: true,
+      name: name,
+      shop: shop,
+      email: email,
+      state: state,
+      optIn: optIn ? 'Yes' : 'No',
+      doorRate: _door > 0 ? _door.toFixed(2) : '0',
+      insuranceRate: insRate > 0 ? insRate.toFixed(2) : '0',
+      diff: (_door > 0 && insRate > 0) ? (_door - insRate).toFixed(2) : '0'
+    })
+  }).then(function(r) { return r.json(); })
+    .then(function(d) { console.log('Sheet response:', d); })
+    .catch(function(e) { console.error('Sheet error:', e); });
+
+  // Show confirmation
+  var note = document.getElementById('emailSubmittedNote');
+  if (note) note.style.display = 'block';
+
+  // Directly reveal results panels if door rate already calculated
+  if (_door > 0 && _hours > 0) {
+    var rp = document.getElementById('resultsPanel');
+    var gp = document.getElementById('gapPanel');
+    var hb2 = document.getElementById('headerBadge');
+    var ph = document.getElementById('placeholder');
+    if (rp) rp.className = 'c-results visible';
+    if (gp) gp.className = 'c-gap visible';
+    if (hb2) { hb2.style.display = 'block'; set('badgeRate', '$' + fmt(_door)); }
+    if (ph) ph.style.display = 'none';
+    calc();
+  }
+}
+
+// ── CTA FORM ──────────────────────────────────────────────────────────────────
+function updateCTABtn() {
+  var e = document.getElementById('cta_email');
+  var btn = document.getElementById('ctaBtn');
+  if (e && btn) btn.disabled = !e.value.trim() || e.value.indexOf('@') < 0;
+}
+
+function submitCTA() {
+  var email = document.getElementById('cta_email') ? document.getElementById('cta_email').value.trim() : '';
+  if (!email) return;
+  var btn = document.getElementById('ctaBtn');
+  if (btn) { btn.disabled = true; btn.textContent = 'Sending...'; }
+  var fd = new FormData();
+  fd.append('form-name', 'consultation');
+  fd.append('name', document.getElementById('cta_name') ? document.getElementById('cta_name').value : '');
+  fd.append('shop', document.getElementById('cta_shop') ? document.getElementById('cta_shop').value : '');
+  fd.append('email', email);
+  fd.append('phone', document.getElementById('cta_phone') ? document.getElementById('cta_phone').value : '');
+  fd.append('state', document.getElementById('cta_state') ? document.getElementById('cta_state').value : '');
+  fd.append('ros', document.getElementById('cta_ros') ? document.getElementById('cta_ros').value : '');
+  fd.append('tier', document.getElementById('cta_tier') ? document.getElementById('cta_tier').value : '');
+  fd.append('door-rate', _door > 0 ? '$' + fmt(_door) + '/hr' : 'Not calculated');
+  fetch('/', {method: 'POST', body: fd}).catch(function(e) { console.error(e); });
+  var form = document.getElementById('ctaForm');
+  var success = document.getElementById('ctaSuccess');
+  if (form) form.style.display = 'none';
+  if (success) success.classList.add('visible');
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+window.calc = calc;
+window.calcGap = calcGap;
+window.checkInlineBtn = checkInlineBtn;
+window.submitInlineEmail = submitInlineEmail;
+window.updateCTABtn = updateCTABtn;
+window.submitCTA = submitCTA;
+
+document.addEventListener('DOMContentLoaded', function() {
+  calc();
+  renderNational();
+});
+</script>
+</body>
+</html>
